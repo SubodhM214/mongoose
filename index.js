@@ -1,21 +1,48 @@
-// reading file
-const dbConnect = require("./mongodb");
+const mongoose = require("mongoose");
 
-//method 1 promise
-// dbConnect().then((res) => {
-//   res
-//     .find()
-//     .toArray()
-//     .then((data) => {
-//       console.log(data);
-//     });
-// });
+mongoose.connect("mongodb://localhost:27017/ecomm");
+const ProductSchema = new mongoose.Schema({
+  name: String,
+  price: Number,
+  Brand: String,
+  category: String,
+});
 
-// method 2:async await
-const main = async () => {
-  let data = await dbConnect();
-  data = await data.find().toArray();
+const saveInDB = async () => {
+  const Product = mongoose.model("products", ProductSchema);
+  let data = new Product({
+    name: "Moto E",
+    price: 230,
+    Brand: "Motorolla",
+    category: "Mobile",
+  });
+  let result = await data.save();
+  console.log(result);
+};
+
+const updateInDB = async () => {
+  const Product = mongoose.model("products", ProductSchema);
+  let data = await Product.updateOne(
+    { name: "Moto E" },
+    {
+      $set: { price: 550 },
+    }
+  );
   console.log(data);
 };
 
-main();
+// updateInDB();
+
+const deleteInDB = async () => {
+  const Product = mongoose.model("products", ProductSchema);
+  let data = await Product.deleteOne({ name: "SMUI 10" });
+  console.log(data);
+};
+// deleteInDB();
+const findInDB = async () => {
+  const Product = mongoose.model("products", ProductSchema);
+  let data = await Product.find({ name: "XYZ" });
+  console.log(data);
+};
+
+// findInDB();
